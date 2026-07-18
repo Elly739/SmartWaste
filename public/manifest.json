@@ -1,0 +1,38 @@
+{
+  "name": "SmartWaste - Turning Waste Into Impact",
+  "short_name": "SmartWaste",
+  "description": "Kenya's behavior-driven waste management platform. Scan, dispose, earn points, redeem rewards.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#030712",
+  "theme_color": "#065f46",
+  "icons": [
+    {
+      "src": "/Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "utilities", "social"],
+  "screenshots": [],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Scan & Dispose",
+      "short_name": "Scan",
+      "description": "Scan a bin QR code and log your waste disposal",
+      "url": "/?action=dispose",
+      "icons": [{ "src": "/Logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Rewards",
+      "short_name": "Rewards",
+      "description": "View and redeem your points for rewards",
+      "url": "/?action=rewards",
+      "icons": [{ "src": "/Logo.png", "sizes": "96x96" }]
+    }
+  ]
+}

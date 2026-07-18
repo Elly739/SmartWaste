@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /partner
+Disallow: /institution
+Disallow: /profile
+Disallow: /history
+Disallow: /rewards
+Disallow: /leaderboard
+Disallow: /dispose
+
+Sitemap: https://smartwaste.co.ke/sitemap.xml

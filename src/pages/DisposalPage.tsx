@@ -186,28 +186,17 @@ export default function DisposalPage({ onNavigate }: DisposalPageProps) {
       if (todayPts + selectedCategory.points_per_unit > globalLimit.max_points_per_day) { setError(`Daily points cap reached (${globalLimit.max_points_per_day} pts/day). Try again tomorrow.`); setLoading(false); return; }
     }
 
-    const points = selectedCategory.points_per_unit;
-    const { data: disposal, error: disposalErr } = await supabase.from('disposals').insert({
-      user_id: profile.id, bin_id: selectedBin.id, waste_category_id: selectedCategory.id,
-      points_earned: points, location_lat: userLocation?.lat ?? null, location_lng: userLocation?.lng ?? null,
-    }).select().single();
-    if (disposalErr || !disposal) { setError('Failed to record disposal. Please try again.'); setLoading(false); return; }
+    const { data: result, error: rpcErr } = await supabase.rpc('process_disposal', {
+      p_bin_id: selectedBin.id,
+      p_waste_category_id: selectedCategory.id,
+      p_location_lat: userLocation?.lat ?? null,
+      p_location_lng: userLocation?.lng ?? null,
+    });
+    if (rpcErr) { setError(rpcErr.message); setLoading(false); return; }
 
-    const newTotal = (profile.total_points ?? 0) + points;
-    const newLifetime = (profile.lifetime_points ?? 0) + points;
-    const today = new Date().toISOString().split('T')[0];
-    const lastDate = profile.last_disposal_date;
-    let newStreak = profile.current_streak;
-    if (lastDate !== today) {
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-      newStreak = lastDate === yesterday ? (profile.current_streak ?? 0) + 1 : 1;
-    }
-    const longestStreak = Math.max(newStreak, profile.longest_streak ?? 0);
-    await supabase.from('profiles').update({ total_points: newTotal, lifetime_points: newLifetime, current_streak: newStreak, longest_streak: longestStreak, last_disposal_date: today }).eq('id', profile.id);
-    await supabase.from('points_transactions').insert({ user_id: profile.id, disposal_id: disposal.id, type: 'earn', amount: points, balance_after: newTotal, description: `Disposed ${selectedCategory.name} at ${selectedBin.location_name}` });
-    await supabase.from('bins').update({ total_collections: (selectedBin.total_collections ?? 0) + 1, last_collection_at: new Date().toISOString() }).eq('id', selectedBin.id);
     await refreshProfile();
-    setEarnedPoints(points); setStep('success'); setLoading(false);
+    setEarnedPoints((result as any)?.points_earned ?? selectedCategory.points_per_unit);
+    setStep('success'); setLoading(false);
   }
 
   function reset() { setStep('scan'); setQrInput(''); setSelectedBin(null); setSelectedCategory(null); setError(''); setEarnedPoints(0); }

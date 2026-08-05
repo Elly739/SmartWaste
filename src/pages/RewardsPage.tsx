@@ -77,29 +77,20 @@ export default function RewardsPage() {
     }
     setRedeeming(reward.id);
     setError('');
-    const newTotal = (profile.total_points ?? 0) - reward.points_cost;
 
-    const { data: redemption, error: redErr } = await supabase
-      .from('reward_redemptions')
-      .insert({ user_id: profile.id, reward_id: reward.id, points_spent: reward.points_cost, status: 'pending' })
-      .select()
-      .single();
+    const { data: result, error: rpcErr } = await supabase.rpc('redeem_reward', {
+      p_reward_id: reward.id,
+    });
 
-    if (redErr) {
-      setError('Failed to redeem. Please try again.');
+    if (rpcErr) {
+      setError(rpcErr.message);
       setRedeeming(null);
       return;
     }
 
-    await supabase.from('profiles').update({ total_points: newTotal }).eq('id', profile.id);
-    await supabase.from('points_transactions').insert({
-      user_id: profile.id, type: 'redeem', amount: -reward.points_cost, balance_after: newTotal,
-      description: `Redeemed: ${reward.title}`,
-    });
-    await supabase.from('rewards').update({ redemption_count: (reward.redemption_count ?? 0) + 1 }).eq('id', reward.id);
     await refreshProfile();
     await loadData();
-    setSuccess(`Successfully redeemed "${reward.title}"! Your code: ${(redemption as any).redemption_code}`);
+    setSuccess(`Successfully redeemed "${reward.title}"! Your code: ${(result as any)?.redemption_code}`);
     setRedeeming(null);
     setActiveTab('myrewards');
   }

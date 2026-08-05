@@ -143,10 +143,10 @@ export default function AdminDashboard() {
   async function toggleSuspend(userId: string, currentlySuspended: boolean) {
     setSuspendingId(userId);
     if (currentlySuspended) {
-      await supabase.from('profiles').update({ suspended: false, suspended_reason: null }).eq('id', userId);
+      await supabase.rpc('admin_update_profile', { p_target_user_id: userId, p_suspended: false });
     } else {
       const reason = prompt('Reason for suspension:') ?? 'Violation of terms';
-      await supabase.from('profiles').update({ suspended: true, suspended_reason: reason }).eq('id', userId);
+      await supabase.rpc('admin_update_profile', { p_target_user_id: userId, p_suspended: true, p_suspended_reason: reason });
     }
     setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, suspended: !currentlySuspended } : u));
     setSuspendingId(null);
@@ -170,7 +170,10 @@ export default function AdminDashboard() {
     const adminId = (await supabase.auth.getUser()).data.user?.id;
 
     if (req.requested_role === 'institution') {
-      await supabase.from('profiles').update({ role: 'institution', institution_id: req.institution_id, role_request_status: 'approved' }).eq('id', req.user_id);
+      await supabase.rpc('admin_update_profile', {
+        p_target_user_id: req.user_id, p_role: 'institution',
+        p_institution_id: req.institution_id, p_role_request_status: 'approved',
+      });
     } else if (req.requested_role === 'partner') {
       const { data: newPartner } = await supabase.from('collection_partners').insert({
         name: req.partner_name,
@@ -180,7 +183,10 @@ export default function AdminDashboard() {
         is_active: true,
       }).select().single();
       if (newPartner) {
-        await supabase.from('profiles').update({ role: 'partner', partner_id: newPartner.id, role_request_status: 'approved' }).eq('id', req.user_id);
+        await supabase.rpc('admin_update_profile', {
+          p_target_user_id: req.user_id, p_role: 'partner',
+          p_partner_id: newPartner.id, p_role_request_status: 'approved',
+        });
       }
     }
 
@@ -194,7 +200,10 @@ export default function AdminDashboard() {
     setApprovingId(reqId);
     const adminId = (await supabase.auth.getUser()).data.user?.id;
     await supabase.from('role_requests').update({ status: 'rejected', reviewed_by: adminId ?? null, reviewed_at: new Date().toISOString() }).eq('id', reqId);
-    await supabase.from('profiles').update({ role_request_status: 'rejected' }).eq('id', roleRequests.find(r => r.id === reqId)?.user_id ?? '');
+    await supabase.rpc('admin_update_profile', {
+      p_target_user_id: roleRequests.find(r => r.id === reqId)?.user_id ?? '',
+      p_role_request_status: 'rejected',
+    });
     setRoleRequests(prev => prev.map(r => r.id === reqId ? { ...r, status: 'rejected' } : r));
     setApprovingId(null);
   }

@@ -188,10 +188,6 @@ All tables have RLS enabled. Access is scoped by role:
 - **Session Management** — Supabase handles JWT sessions with auto-refresh
 - **Role-Based Routing** — After login, users are redirected to their role-specific dashboard
 
-### Demo Admin Account
-- Email: `admin@smartwaste.ke`
-- Password: `Admin@2024`
-
 ---
 
 ## SEO

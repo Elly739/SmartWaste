@@ -313,7 +313,7 @@ export default function LandingPage({ onNavigate }: Props) {
           <button onClick={() => onNavigate('register')} className="btn-primary text-lg !px-10 !py-5 glow-green inline-flex items-center gap-3 group">
             Join for Free <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </button>
-          <p className="text-white/20 text-xs mt-6">admin@smartwaste.ke / Admin@2024 to explore the admin dashboard</p>
+
         </div>
       </section>
 

@@ -411,15 +411,7 @@ export default function AuthPage({ mode, onNavigate }: Props) {
             </button>
           </div>
 
-          {/* Admin hint */}
-          {mode === 'login' && (
-            <div className="mt-5 p-3 rounded-xl bg-white/5 border border-white/5">
-              <p className="text-[11px] text-white/25 font-semibold text-center flex items-center justify-center gap-1.5">
-                <Zap size={11} className="text-primary-500" />
-                Admin demo: admin@smartwaste.ke · Admin@2024
-              </p>
-            </div>
-          )}
+
         </div>
       </div>
     </div>

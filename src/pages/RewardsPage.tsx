@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
   Gift, Tag, Package, Zap, CheckCircle, AlertCircle,
-  RefreshCw, Star, Clock, Search, Diamond, Ticket
+  RefreshCw, Star, Clock, Search, Diamond, Ticket,
+  Sparkles, Calendar
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -83,7 +84,7 @@ export default function RewardsPage() {
     });
 
     if (rpcErr) {
-      setError(rpcErr.message);
+      setError('Could not redeem this reward. Please try again.');
       setRedeeming(null);
       return;
     }

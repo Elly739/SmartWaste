@@ -59,7 +59,7 @@ export default function AuthPage({ mode, onNavigate }: Props) {
 
       const { error } = await signUp(email, password, fullName, roleRequest);
       if (error) {
-        setError(error.message);
+        setError('Could not create your account. That email may already be in use.');
       } else if (registerRole !== 'user') {
         setSuccess('Account created! Your role request has been submitted. The SmartWaste admin will review and approve it shortly. You can sign in now, but management features will unlock after approval.');
         setTimeout(() => onNavigate('login'), 4000);

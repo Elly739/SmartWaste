@@ -34,7 +34,7 @@ export default function ProfilePage({ onNavigate }: Props) {
       .eq('id', profile.id);
 
     if (error) {
-      setError(error.message);
+      setError('Could not save your profile. Please try again.');
     } else {
       await refreshProfile();
       setSuccess('Profile updated successfully!');

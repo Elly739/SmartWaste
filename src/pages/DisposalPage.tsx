@@ -192,7 +192,7 @@ export default function DisposalPage({ onNavigate }: DisposalPageProps) {
       p_location_lat: userLocation?.lat ?? null,
       p_location_lng: userLocation?.lng ?? null,
     });
-    if (rpcErr) { setError(rpcErr.message); setLoading(false); return; }
+    if (rpcErr) { setError('Could not complete the disposal. Please try again.'); setLoading(false); return; }
 
     await refreshProfile();
     setEarnedPoints((result as any)?.points_earned ?? selectedCategory.points_per_unit);

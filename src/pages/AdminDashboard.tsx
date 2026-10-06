@@ -134,7 +134,7 @@ export default function AdminDashboard() {
       area_type: newBin.area_type || null,
       area_name: newBin.area_name || null,
     });
-    if (error) { setBinError(error.message); } else {
+    if (error) { setBinError('Could not create the bin. Please try again.'); } else {
       setShowAddBin(false); setNewBin({ qr_code: '', location_name: '', location_description: '', waste_category_id: '', partner_id: '', area_type: '', area_name: '' }); setGeneratedQR(null); await loadAll();
     }
     setAddingBin(false);
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
       subscription_plan: newInstitution.plan,
       subscription_status: newInstitution.plan === 'pilot' ? 'trial' : 'active',
     });
-    if (error) { setInstError(error.message); } else {
+    if (error) { setInstError('Could not add the institution. Please try again.'); } else {
       setShowAddInstitution(false);
       setNewInstitution({ name: '', type: 'university', contact_email: '', contact_phone: '', description: '', plan: 'pilot' });
       await loadAll();

@@ -1,7 +1,7 @@
-import { useEffect, useState, Suspense, lazy } from 'react';
+import { useEffect, useState, Suspense, lazy, Component, ReactNode } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
-import { Ban, RefreshCw } from 'lucide-react';
+import { Ban, RefreshCw, AlertCircle } from 'lucide-react';
 import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
@@ -25,6 +25,29 @@ function PageLoader() {
       <RefreshCw size={28} className="animate-spin text-primary-500" />
     </div>
   );
+}
+
+class PageErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err: unknown) { console.error('Page render error:', err); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="rounded-3xl bg-white/[0.03] border border-white/5 text-center py-20 max-w-md mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+            <AlertCircle size={32} className="text-red-400" />
+          </div>
+          <h2 className="text-xl font-extrabold text-white mb-2">Something went wrong</h2>
+          <p className="text-white/40 text-sm mb-6">This page encountered an error while loading. Try refreshing.</p>
+          <button onClick={() => window.location.reload()} className="px-6 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-semibold text-sm transition-all">
+            Refresh Page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function AppContent() {
@@ -99,25 +122,33 @@ function AppContent() {
           {page === 'dashboard' && <UserDashboard onNavigate={navigate} />}
           {page === 'dispose' && <DisposalPage onNavigate={navigate} />}
           {page === 'rewards' && (
-            <Suspense fallback={<PageLoader />}>
-              <RewardsPage />
-            </Suspense>
+            <PageErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <RewardsPage />
+              </Suspense>
+            </PageErrorBoundary>
           )}
           {page === 'leaderboard' && (
-            <Suspense fallback={<PageLoader />}>
-              <LeaderboardPage />
-            </Suspense>
+            <PageErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <LeaderboardPage />
+              </Suspense>
+            </PageErrorBoundary>
           )}
           {page === 'history' && (
-            <Suspense fallback={<PageLoader />}>
-              <HistoryPage />
-            </Suspense>
+            <PageErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <HistoryPage />
+              </Suspense>
+            </PageErrorBoundary>
           )}
           {page === 'profile' && <ProfilePage onNavigate={navigate} />}
           {page === 'admin' && profile?.role === 'admin' && (
-            <Suspense fallback={<PageLoader />}>
-              <AdminDashboard />
-            </Suspense>
+            <PageErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <AdminDashboard />
+              </Suspense>
+            </PageErrorBoundary>
           )}
           {page === 'admin' && profile?.role !== 'admin' && (
             <div className="rounded-3xl bg-white/[0.03] border border-white/5 text-center py-20">
@@ -126,9 +157,11 @@ function AppContent() {
             </div>
           )}
           {page === 'partner' && profile?.role === 'partner' && (
-            <Suspense fallback={<PageLoader />}>
-              <PartnerDashboard />
-            </Suspense>
+            <PageErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <PartnerDashboard />
+              </Suspense>
+            </PageErrorBoundary>
           )}
           {page === 'partner' && profile?.role !== 'partner' && (
             <div className="rounded-3xl bg-white/[0.03] border border-white/5 text-center py-20">
@@ -137,9 +170,11 @@ function AppContent() {
             </div>
           )}
           {page === 'institution' && profile?.role === 'institution' && (
-            <Suspense fallback={<PageLoader />}>
-              <InstitutionDashboard />
-            </Suspense>
+            <PageErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <InstitutionDashboard />
+              </Suspense>
+            </PageErrorBoundary>
           )}
           {page === 'institution' && profile?.role !== 'institution' && (
             <div className="rounded-3xl bg-white/[0.03] border border-white/5 text-center py-20">

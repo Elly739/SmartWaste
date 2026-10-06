@@ -52,21 +52,32 @@ export default function RewardsPage() {
   useEffect(() => { loadData(); loadCampaigns(); }, [profile?.id]);
 
   async function loadCampaigns() {
-    const { data } = await supabase.from('sponsored_campaigns')
-      .select('*')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false });
-    if (data) setCampaigns(data as SponsoredCampaign[]);
+    try {
+      const { data, error: err } = await supabase.from('sponsored_campaigns')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+      if (err) { console.error('Campaigns load error:', err); return; }
+      if (data) setCampaigns(data as SponsoredCampaign[]);
+    } catch (e) { console.error('Campaigns load failed:', e); }
   }
 
   async function loadData() {
     setLoading(true);
-    const [rewardsRes, redemptionsRes] = await Promise.all([
-      supabase.from('rewards').select('*, collection_partners(name)').eq('is_active', true).order('points_cost'),
-      profile ? supabase.from('reward_redemptions').select('*, rewards(title, category, points_cost)').eq('user_id', profile.id).order('created_at', { ascending: false }) : { data: [] },
-    ]);
-    if (rewardsRes.data) setRewards(rewardsRes.data as Reward[]);
-    if (redemptionsRes.data) setRedemptions(redemptionsRes.data as RewardRedemption[]);
+    try {
+      const [rewardsRes, redemptionsRes] = await Promise.all([
+        supabase.from('rewards').select('*, collection_partners(name)').eq('is_active', true).order('points_cost'),
+        profile ? supabase.from('reward_redemptions').select('*, rewards(title, category, points_cost)').eq('user_id', profile.id).order('created_at', { ascending: false }) : Promise.resolve({ data: [], error: null }),
+      ]);
+      if (rewardsRes.error) console.error('Rewards load error:', rewardsRes.error);
+      if (redemptionsRes.error) console.error('Redemptions load error:', redemptionsRes.error);
+      setRewards((rewardsRes.data ?? []) as Reward[]);
+      setRedemptions(((redemptionsRes.data as RewardRedemption[]) ?? []));
+    } catch (e) {
+      console.error('Rewards data load failed:', e);
+      setRewards([]);
+      setRedemptions([]);
+    }
     setLoading(false);
   }
 
@@ -96,9 +107,10 @@ export default function RewardsPage() {
     setActiveTab('myrewards');
   }
 
-  const filtered = rewards.filter(r => {
+  const filtered = (rewards ?? []).filter(r => {
+    if (!r) return false;
     const matchCat = filter === 'all' || r.category === filter;
-    const matchSearch = r.title.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = (r.title ?? '').toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -120,10 +132,12 @@ export default function RewardsPage() {
                   <span className="text-xs font-bold text-primary-400">{c.sponsor_name}</span>
                 </div>
                 <p className="font-bold text-white text-sm">{c.campaign_title}</p>
-                <p className="text-xs text-white/40 mt-1">{c.description}</p>
+                <p className="text-xs text-white/40 mt-1">{c.description ?? ''}</p>
                 <div className="flex items-center gap-3 mt-3 text-xs">
-                  <span className="font-bold text-primary-400">{c.reward_pool_points.toLocaleString()} pts pool</span>
-                  <span className="text-white/30 flex items-center gap-1"><Calendar size={11} />Ends {new Date(c.end_date).toLocaleDateString()}</span>
+                  <span className="font-bold text-primary-400">{(c.reward_pool_points ?? 0).toLocaleString()} pts pool</span>
+                  {c.end_date && (
+                    <span className="text-white/30 flex items-center gap-1"><Calendar size={11} />Ends {new Date(c.end_date).toLocaleDateString()}</span>
+                  )}
                 </div>
               </div>
             ))}
@@ -211,6 +225,12 @@ export default function RewardsPage() {
             <div className="flex justify-center py-12">
               <RefreshCw size={24} className="animate-spin text-primary-500" />
             </div>
+          ) : filtered.length === 0 ? (
+            <div className="rounded-3xl bg-white/[0.03] border border-white/5 text-center py-16">
+              <Gift size={48} className="text-white/10 mx-auto mb-4" />
+              <p className="text-white/40 font-bold text-sm">No rewards available</p>
+              <p className="text-white/20 text-sm mt-1">Check back later for new rewards.</p>
+            </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filtered.map(reward => {
@@ -240,7 +260,7 @@ export default function RewardsPage() {
                     </div>
 
                     <h3 className="font-bold text-white text-[15px] mb-1.5 leading-snug">{reward.title}</h3>
-                    <p className="text-sm text-white/30 mb-4 leading-relaxed">{reward.description}</p>
+                    <p className="text-sm text-white/30 mb-4 leading-relaxed">{reward.description ?? ''}</p>
 
                     {(reward as any).collection_partners?.name && (
                       <p className="text-[11px] text-white/20 mb-3 flex items-center gap-1">
@@ -251,7 +271,7 @@ export default function RewardsPage() {
                     {/* Points & Redeem */}
                     <div className="flex items-center justify-between pt-3 border-t border-white/5">
                       <div>
-                        <p className="text-xl font-black text-primary-400">{reward.points_cost.toLocaleString()}</p>
+                        <p className="text-xl font-black text-primary-400">{(reward.points_cost ?? 0).toLocaleString()}</p>
                         <p className="text-[10px] text-white/20 font-bold">{t('rewards.points')}</p>
                       </div>
                       <button
@@ -272,9 +292,9 @@ export default function RewardsPage() {
                       </button>
                     </div>
 
-                    {reward.stock_count !== -1 && reward.stock_count > 0 && (
+                    {reward.stock_count != null && reward.stock_count !== -1 && reward.stock_count > 0 && (
                       <p className="text-[10px] text-white/20 mt-2 flex items-center gap-1">
-                        <Ticket size={10} /> {reward.stock_count - reward.redemption_count} left
+                        <Ticket size={10} /> {Math.max(reward.stock_count - (reward.redemption_count ?? 0), 0)} left
                       </p>
                     )}
                   </div>
@@ -300,20 +320,20 @@ export default function RewardsPage() {
                   <Gift size={22} className="text-primary-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-white text-sm truncate">{(r as any).rewards?.title}</p>
+                  <p className="font-bold text-white text-sm truncate">{(r as any).rewards?.title ?? 'Reward'}</p>
                   <p className="text-[11px] text-white/30 mt-0.5">
-                    Code: <span className="font-mono font-bold text-primary-400">{r.redemption_code}</span>
+                    Code: <span className="font-mono font-bold text-primary-400">{r.redemption_code ?? 'N/A'}</span>
                   </p>
-                  <p className="text-[10px] text-white/15">{new Date(r.created_at).toLocaleString()}</p>
+                  <p className="text-[10px] text-white/15">{r.created_at ? new Date(r.created_at).toLocaleString() : ''}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-bold text-red-400">-{r.points_spent} pts</p>
+                  <p className="text-sm font-bold text-red-400">-{r.points_spent ?? 0} pts</p>
                   <span className={`inline-block px-2 py-0.5 rounded-lg text-[10px] font-bold mt-1 ${
                     r.status === 'fulfilled' ? 'bg-green-500/10 text-green-400' :
                     r.status === 'pending' ? 'bg-amber-500/10 text-amber-400' :
                     r.status === 'expired' ? 'bg-red-500/10 text-red-400' : 'bg-white/5 text-white/30'
                   }`}>
-                    {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+                    {(r.status ?? 'pending').charAt(0).toUpperCase() + (r.status ?? 'pending').slice(1)}
                   </span>
                 </div>
               </div>

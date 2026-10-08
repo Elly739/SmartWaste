@@ -7,7 +7,9 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
+import { getWasteIcon } from '../lib/wasteIcons';
 import type { Bin, WasteCategory, CategoryLimit, Page } from '../types';
+import type { LucideIcon } from 'lucide-react';
 
 // Confetti particle component
 function Confetti({ count = 50 }: { count?: number }) {
@@ -49,17 +51,6 @@ interface DisposalPageProps {
 }
 
 type Step = 'scan' | 'category' | 'confirm' | 'success';
-
-const BIN_ICONS: Record<string, string> = {
-  'Plastic Bottles': '♻️',
-  'Paper & Cardboard': '📄',
-  'Metal & Aluminum': '🔩',
-  'Glass': '🫙',
-  'Organic Waste': '🌿',
-  'Electronic Waste': '💻',
-  'LED Bulbs': '💡',
-  'Batteries': '🔋',
-};
 
 export default function DisposalPage({ onNavigate }: DisposalPageProps) {
   const { profile, refreshProfile } = useAuth();
@@ -401,6 +392,8 @@ export default function DisposalPage({ onNavigate }: DisposalPageProps) {
               {categories.map(cat => {
                 const catLimit = limits.find(l => l.waste_category_id === cat.id);
                 const isSelected = selectedCategory?.id === cat.id;
+                const wConfig = getWasteIcon(cat.name);
+                const WIcon = wConfig.icon;
                 return (
                   <button key={cat.id} onClick={() => setSelectedCategory(cat)}
                     className={`relative p-4 rounded-2xl text-left transition-all ${
@@ -408,7 +401,9 @@ export default function DisposalPage({ onNavigate }: DisposalPageProps) {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{BIN_ICONS[cat.name] ?? '♻️'}</span>
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${wConfig.color}20`, border: `1px solid ${wConfig.color}30` }}>
+                        <WIcon size={20} style={{ color: wConfig.color }} />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-white text-sm truncate">{language === 'sw' ? cat.name_sw || cat.name : cat.name}</p>
                         <p className="text-xs font-black text-primary-400 mt-0.5">+{cat.points_per_unit} pts</p>

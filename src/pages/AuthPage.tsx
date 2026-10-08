@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, ArrowRight, AlertCircle, Zap, Sparkles, Building2, Recycle, CheckCircle2, Clock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, ArrowRight, AlertCircle, Zap, Sparkles, Building2, Recycle, CheckCircle2, Clock, Gift, Trophy } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import type { Page, Institution } from '../types';
@@ -99,14 +99,16 @@ export default function AuthPage({ mode, onNavigate }: Props) {
           </p>
           <div className="space-y-3.5">
             {[
-              { icon: '♻️', text: '8 waste categories, 8 ways to earn' },
-              { icon: '⚡', text: 'Points in your wallet before you walk away' },
-              { icon: '🏆', text: 'Compete on campus & community boards' },
-              { icon: '🎁', text: 'Airtime, vouchers, merch — real value' },
-            ].map((item, i) => (
+              { icon: Recycle, text: '8 waste categories, 8 ways to earn' },
+              { icon: Zap, text: 'Points in your wallet before you walk away' },
+              { icon: Trophy, text: 'Compete on campus & community boards' },
+              { icon: Gift, text: 'Airtime, vouchers, merch — real value' },
+            ].map(({ icon: Icon, text }, i) => (
               <div key={i} className="flex items-center gap-3 text-white/50">
-                <span className="text-xl">{item.icon}</span>
-                <span className="text-sm font-medium">{item.text}</span>
+                <div className="w-8 h-8 rounded-lg bg-primary-500/10 border border-primary-500/20 flex items-center justify-center flex-shrink-0">
+                  <Icon size={15} className="text-primary-400" />
+                </div>
+                <span className="text-sm font-medium">{text}</span>
               </div>
             ))}
           </div>

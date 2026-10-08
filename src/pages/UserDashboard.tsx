@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import {
   Zap, Leaf, Recycle, Flame, Trophy,
-  Award, QrCode, ChevronRight, Gift, BarChart3, Star, TrendingUp
+  Award, QrCode, ChevronRight, Gift, BarChart3, Star, TrendingUp,
+  Sprout, Shield, Medal, Crown, Diamond, Rocket, Target, Atom, Brain, Globe2
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -10,11 +11,12 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
+import { getWasteIcon } from '../lib/wasteIcons';
 import type { Disposal, UserAchievement, Challenge, Reward, Page } from '../types';
 
 const COLORS: Record<string, string> = {
-  'Plastic Bottles': '#3b82f6', 'Paper & Cardboard': '#f59e0b', 'Metal & Aluminum': '#6b7280',
-  'Glass': '#10b981', 'Organic Waste': '#22c55e', 'Electronic Waste': '#8b5cf6',
+  'Plastic Bottles': '#3b82f6', 'Paper & Cardboard': '#f59e0b', 'Metal & Aluminum': '#94a3b8',
+  'Glass': '#10b981', 'Organic Waste': '#22c55e', 'Electronic Waste': '#a855f7',
   'LED Bulbs': '#f97316', 'Batteries': '#ef4444',
 };
 
@@ -24,18 +26,20 @@ const STREAK_TIERS = [
   { days: 30, label: '30-Day', color: '#dc2626' },
 ];
 
+import type { LucideIcon } from 'lucide-react';
+
 // XP Level system: each level requires progressively more points
-const LEVELS = [
-  { level: 1, xp: 0, title: 'Newcomer', icon: '🌱' },
-  { level: 2, xp: 100, title: 'Recycler', icon: '♻️' },
-  { level: 3, xp: 300, title: 'Eco Warrior', icon: '🌿' },
-  { level: 4, xp: 600, title: 'Green Champion', icon: '🏆' },
-  { level: 5, xp: 1000, title: 'Planet Saver', icon: '🌍' },
-  { level: 6, xp: 2000, title: 'Eco Legend', icon: '⭐' },
-  { level: 7, xp: 4000, title: 'Waste Master', icon: '👑' },
-  { level: 8, xp: 8000, title: 'Earth Guardian', icon: '🌟' },
-  { level: 9, xp: 15000, title: 'Sustainability Sage', icon: '💫' },
-  { level: 10, xp: 30000, title: 'Nature Deity', icon: '🔥' },
+const LEVELS: { level: number; xp: number; title: string; icon: LucideIcon; color: string }[] = [
+  { level: 1, xp: 0, title: 'Newcomer', icon: Sprout, color: '#22c55e' },
+  { level: 2, xp: 100, title: 'Recycler', icon: Recycle, color: '#10b981' },
+  { level: 3, xp: 300, title: 'Eco Warrior', icon: Leaf, color: '#84cc16' },
+  { level: 4, xp: 600, title: 'Green Champion', icon: Shield, color: '#22c55e' },
+  { level: 5, xp: 1000, title: 'Planet Saver', icon: Globe2, color: '#3b82f6' },
+  { level: 6, xp: 2000, title: 'Eco Legend', icon: Medal, color: '#f59e0b' },
+  { level: 7, xp: 4000, title: 'Waste Master', icon: Crown, color: '#f97316' },
+  { level: 8, xp: 8000, title: 'Earth Guardian', icon: Rocket, color: '#a855f7' },
+  { level: 9, xp: 15000, title: 'Sustainability Sage', icon: Brain, color: '#ec4899' },
+  { level: 10, xp: 30000, title: 'Nature Deity', icon: Atom, color: '#fbbf24' },
 ];
 
 function getLevel(points: number) {
@@ -132,8 +136,8 @@ export default function UserDashboard({ onNavigate }: Props) {
       <div className="rounded-3xl bg-gradient-to-br from-primary-500/10 via-primary-600/5 to-brand-800/10 border border-primary-500/20 p-5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-40 h-40 bg-primary-500/10 rounded-full blur-3xl" />
         <div className="flex items-center gap-4 relative z-10">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-3xl shadow-lg shadow-primary-500/30">
-            {levelInfo.current.icon}
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/30">
+            {(() => { const LevelIcon = levelInfo.current.icon; return <LevelIcon size={28} className="text-white" />; })()}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
@@ -381,13 +385,17 @@ export default function UserDashboard({ onNavigate }: Props) {
         </div>
         {recentDisposals.length > 0 ? (
           <div className="space-y-2">
-            {recentDisposals.slice(0, 5).map(d => (
+            {recentDisposals.slice(0, 5).map(d => {
+              const catName = (d as any).waste_categories?.name;
+              const wConfig = getWasteIcon(catName);
+              const WIcon = wConfig.icon;
+              return (
               <div key={d.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/[0.02] transition-colors">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${(d as any).waste_categories?.color ?? '#22c55e'}20` }}>
-                  <Recycle size={15} style={{ color: (d as any).waste_categories?.color ?? '#22c55e' }} />
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${wConfig.color}20`, border: `1px solid ${wConfig.color}25` }}>
+                  <WIcon size={15} style={{ color: wConfig.color }} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white text-xs truncate">{(d as any).waste_categories?.name ?? 'Waste'}</p>
+                  <p className="font-semibold text-white text-xs truncate">{catName ?? 'Waste'}</p>
                   <p className="text-[10px] text-white/30 truncate">{(d as any).bins?.location_name ?? 'Unknown'}</p>
                 </div>
                 <div className="text-right flex-shrink-0">
@@ -396,7 +404,8 @@ export default function UserDashboard({ onNavigate }: Props) {
                 </div>
                 {d.is_flagged && <span className="px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 text-[10px] font-bold">Flag</span>}
               </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-10">

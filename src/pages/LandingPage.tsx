@@ -2,22 +2,26 @@ import { useRef, useState, useEffect } from 'react';
 import {
   QrCode, Gift, Recycle, Star, Trash2,
   Cpu, Lightbulb, FlaskConical, BarChart3,
-  ArrowRight, Zap, Shield, TrendingUp, Globe, ChevronDown
+  ArrowRight, Zap, Shield, TrendingUp, Globe, ChevronDown,
+  Users, Leaf, Handshake, Bottle, FileText, Wrench, Wine,
+  Sprout, Battery, Trophy, Sparkles, MapPin, Clock
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { getWasteIcon } from '../lib/wasteIcons';
 import type { Page } from '../types';
+import type { LucideIcon } from 'lucide-react';
 
 interface Props { onNavigate: (page: Page) => void; }
 
 const wasteTypes = [
-  { icon: '♻️', name: 'Plastic', pts: 15, color: '#3b82f6' },
-  { icon: '📄', name: 'Paper', pts: 10, color: '#f59e0b' },
-  { icon: '🔩', name: 'Metal', pts: 20, color: '#8b5cf6' },
-  { icon: '🫙', name: 'Glass', pts: 12, color: '#22d3ee' },
-  { icon: '🌿', name: 'Organic', pts: 8, color: '#22c55e' },
-  { icon: '💻', name: 'E-Waste', pts: 50, color: '#ec4899' },
-  { icon: '💡', name: 'LED Bulbs', pts: 25, color: '#f97316' },
-  { icon: '🔋', name: 'Batteries', pts: 30, color: '#ef4444' },
+  { name: 'Plastic', pts: 15, ...getWasteIcon('Plastic Bottles') },
+  { name: 'Paper', pts: 10, ...getWasteIcon('Paper & Cardboard') },
+  { name: 'Metal', pts: 20, ...getWasteIcon('Metal & Aluminum') },
+  { name: 'Glass', pts: 12, ...getWasteIcon('Glass') },
+  { name: 'Organic', pts: 8, ...getWasteIcon('Organic Waste') },
+  { name: 'E-Waste', pts: 50, ...getWasteIcon('Electronic Waste') },
+  { name: 'LED Bulbs', pts: 25, ...getWasteIcon('LED Bulbs') },
+  { name: 'Batteries', pts: 30, ...getWasteIcon('Batteries') },
 ];
 
 const steps = [
@@ -28,17 +32,17 @@ const steps = [
 ];
 
 const stats = [
-  { label: 'People Already In', value: '12,400+', icon: '👥' },
-  { label: 'Disposals Logged', value: '285K+', icon: '♻️' },
-  { label: 'CO₂ Offset', value: '43 tonnes', icon: '🌍' },
-  { label: 'Partner Brands', value: '18', icon: '🤝' },
+  { label: 'People Already In', value: '12,400+', icon: Users },
+  { label: 'Disposals Logged', value: '285K+', icon: Recycle },
+  { label: 'CO₂ Offset', value: '43 tonnes', icon: Leaf },
+  { label: 'Partner Brands', value: '18', icon: Handshake },
 ];
 
 const partners = [
   { name: 'Boom Lights', specialty: 'LED Bulbs', icon: Lightbulb, color: '#f97316' },
   { name: 'PET Recycle KE', specialty: 'Plastic', icon: FlaskConical, color: '#3b82f6' },
-  { name: 'E-Waste Africa', specialty: 'Electronics', icon: Cpu, color: '#8b5cf6' },
-  { name: 'GreenMetal Co.', specialty: 'Metal', icon: BarChart3, color: '#6b7280' },
+  { name: 'E-Waste Africa', specialty: 'Electronics', icon: Cpu, color: '#a855f7' },
+  { name: 'GreenMetal Co.', specialty: 'Metal', icon: BarChart3, color: '#94a3b8' },
   { name: 'BioCompost KE', specialty: 'Organic', icon: Recycle, color: '#22c55e' },
 ];
 
@@ -46,6 +50,13 @@ const testimonials = [
   { name: 'Amina O.', role: 'UoN Student', text: "Made KES 500 in airtime just from tossing bottles on campus. Literally free money.", rating: 5, img: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=80' },
   { name: 'David K.', role: 'Lecturer, Strathmore', text: "Our whole dept competes on the leaderboard now. Never seen anything drive behaviour change this fast.", rating: 5, img: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=80' },
   { name: 'Grace W.', role: 'Office Manager', text: "Recycling engagement at our office jumped 400% in month one. That number is real.", rating: 5, img: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=80' },
+];
+
+const trustBadges = [
+  { icon: Shield, text: 'Fraud Protected' },
+  { icon: Zap, text: 'Instant Rewards' },
+  { icon: Gift, text: 'Always Free' },
+  { icon: MapPin, text: 'Kenya-First' },
 ];
 
 function useCounter(target: number) {
@@ -93,28 +104,22 @@ export default function LandingPage({ onNavigate }: Props) {
 
       {/* ===== HERO ===== */}
       <section className="relative pt-14 min-h-[100svh] flex flex-col justify-center overflow-hidden">
-        {/* Background elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-brand-950 to-gray-950" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary-500/8 blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-brand-800/20 blur-[100px]" />
-        {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-5 py-16 md:py-24 w-full">
           <div className="text-center max-w-4xl mx-auto">
-
-            {/* Logo */}
             <div className="flex justify-center mb-10">
               <img src="/Logo.png" alt="SmartWaste" className="h-14 sm:h-16 md:h-20 w-auto animate-fade-in" />
             </div>
 
-            {/* Live activity pill */}
             <div className="inline-flex items-center gap-2 bg-primary-500/10 border border-primary-500/30 rounded-full px-4 py-2 mb-8 animate-fade-up">
               <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse" />
               <span className="text-primary-400 text-xs font-bold">{users.toLocaleString()}+ people earning right now</span>
             </div>
 
-            {/* Headline */}
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tight mb-6 animate-fade-up delay-100">
               Scan. Drop.<br /><span className="text-gradient-green">Earn.</span>
             </h1>
@@ -132,36 +137,34 @@ export default function LandingPage({ onNavigate }: Props) {
               </button>
             </div>
 
-            {/* Trust badges */}
             <div className="flex flex-wrap justify-center gap-3 mt-10 animate-fade-up delay-400">
-              {[
-                { icon: '🛡️', text: 'Fraud Protected' },
-                { icon: '⚡', text: 'Instant Rewards' },
-                { icon: '🆓', text: 'Always Free' },
-                { icon: '📍', text: 'Kenya-First' },
-              ].map(b => (
-                <div key={b.text} className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-                  <span className="text-sm">{b.icon}</span>
-                  <span className="text-white/50 text-[11px] font-semibold">{b.text}</span>
+              {trustBadges.map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
+                  <Icon size={14} className="text-primary-400" />
+                  <span className="text-white/50 text-[11px] font-semibold">{text}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Floating waste cards - horizontal scroll on mobile */}
+          {/* Floating waste cards */}
           <div className="mt-16 overflow-x-auto -mx-4 px-4 pb-4">
             <div className="flex gap-3 sm:flex-wrap sm:justify-center min-w-max sm:min-w-0">
-              {wasteTypes.map((w, i) => (
-                <div key={i} className="flex-shrink-0 glass rounded-2xl px-4 py-3 flex items-center gap-3 animate-bounce-soft hover:scale-105 transition-transform cursor-default" style={{ animationDelay: `${i * 0.3}s` }}>
-                  <span className="text-2xl">{w.icon}</span>
-                  <div><p className="text-white text-xs font-bold">{w.name}</p><p className="text-primary-400 text-xs font-black">+{w.pts} pts</p></div>
-                </div>
-              ))}
+              {wasteTypes.map((w, i) => {
+                const Icon = w.icon;
+                return (
+                  <div key={i} className="flex-shrink-0 glass rounded-2xl px-4 py-3 flex items-center gap-3 animate-bounce-soft hover:scale-105 transition-transform cursor-default" style={{ animationDelay: `${i * 0.3}s` }}>
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${w.color}20`, border: `1px solid ${w.color}30` }}>
+                      <Icon size={18} style={{ color: w.color }} />
+                    </div>
+                    <div><p className="text-white text-xs font-bold">{w.name}</p><p className="text-primary-400 text-xs font-black">+{w.pts} pts</p></div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
 
-        {/* Divider */}
         <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </section>
 
@@ -169,11 +172,13 @@ export default function LandingPage({ onNavigate }: Props) {
       <section className="py-16 bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {stats.map(s => (
-              <div key={s.label} className="text-center p-5 rounded-2xl bg-white/3 border border-white/5 hover:border-primary-500/30 transition-colors">
-                <span className="text-3xl block mb-2">{s.icon}</span>
-                <p className="text-2xl sm:text-3xl font-black text-white">{s.value}</p>
-                <p className="text-white/30 text-[11px] font-semibold mt-1 uppercase tracking-wider">{s.label}</p>
+            {stats.map(({ label, value, icon: Icon }) => (
+              <div key={label} className="text-center p-5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-primary-500/30 transition-all duration-300 hover:-translate-y-1">
+                <div className="w-12 h-12 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center mx-auto mb-3">
+                  <Icon size={22} className="text-primary-400" />
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-white">{value}</p>
+                <p className="text-white/30 text-[11px] font-semibold mt-1 uppercase tracking-wider">{label}</p>
               </div>
             ))}
           </div>
@@ -189,8 +194,9 @@ export default function LandingPage({ onNavigate }: Props) {
             <p className="text-white/40 mt-3 text-base max-w-sm mx-auto">Under 10 seconds from scan to points.</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {steps.map(({ num, icon: Icon, title, desc }) => (
+            {steps.map(({ num, icon: Icon, title, desc }, i) => (
               <div key={num} className="relative p-5 rounded-2xl bg-gray-900 border border-white/5 hover:border-primary-500/40 group transition-all duration-300 hover:-translate-y-1">
+                {i < 3 && <div className="hidden lg:block absolute top-1/2 -right-2 w-4 h-px bg-white/10" />}
                 <div className="text-[11px] font-black text-primary-500 mb-4 font-mono">{num}</div>
                 <div className="w-12 h-12 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center mb-4 group-hover:bg-primary-500/20 transition-colors">
                   <Icon size={22} className="text-primary-400" />
@@ -211,13 +217,18 @@ export default function LandingPage({ onNavigate }: Props) {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mt-4">Anything Counts.</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {wasteTypes.map(w => (
-              <div key={w.name} className="group bg-gray-900 hover:bg-gray-800 border border-white/5 hover:border-white/10 rounded-2xl p-4 text-center cursor-default transition-all duration-300 hover:-translate-y-1">
-                <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">{w.icon}</div>
-                <p className="text-white text-[11px] font-bold">{w.name}</p>
-                <p className="text-[11px] font-black mt-1" style={{ color: w.color }}>+{w.pts}</p>
-              </div>
-            ))}
+            {wasteTypes.map((w) => {
+              const Icon = w.icon;
+              return (
+                <div key={w.name} className="group bg-gray-900 hover:bg-gray-800 border border-white/5 hover:border-white/10 rounded-2xl p-4 text-center cursor-default transition-all duration-300 hover:-translate-y-1">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300" style={{ background: `${w.color}15`, border: `1px solid ${w.color}25` }}>
+                    <Icon size={22} style={{ color: w.color }} />
+                  </div>
+                  <p className="text-white text-[11px] font-bold">{w.name}</p>
+                  <p className="text-[11px] font-black mt-1" style={{ color: w.color }}>+{w.pts}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -233,8 +244,8 @@ export default function LandingPage({ onNavigate }: Props) {
                 {[
                   { icon: Shield, title: 'No gaming the system', desc: 'GPS lock, daily caps, anomaly detection. Points go to real disposals.', color: '#22c55e' },
                   { icon: TrendingUp, title: 'Live impact tracking', desc: 'See your CO₂ saved, waste diverted, and rank — in real time.', color: '#3b82f6' },
-                  { icon: Globe, title: 'Campus & hood leaderboards', desc: 'Compete with your estate, campus, or community — not strangers.', color: '#f59e0b' },
-                  { icon: Zap, title: 'Instant gratification', desc: 'Points credited before you even put your phone away.', color: '#ec4899' },
+                  { icon: Trophy, title: 'Campus & hood leaderboards', desc: 'Compete with your estate, campus, or community — not strangers.', color: '#f59e0b' },
+                  { icon: Zap, title: 'Instant gratification', desc: 'Points credited before you even put your phone away.', color: '#a855f7' },
                 ].map(({ icon: Icon, title, desc, color }) => (
                   <div key={title} className="flex gap-4 group">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-110" style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
@@ -313,7 +324,6 @@ export default function LandingPage({ onNavigate }: Props) {
           <button onClick={() => onNavigate('register')} className="btn-primary text-lg !px-10 !py-5 glow-green inline-flex items-center gap-3 group">
             Join for Free <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </button>
-
         </div>
       </section>
 

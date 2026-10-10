@@ -9,7 +9,6 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { getWasteIcon } from '../lib/wasteIcons';
 import type { Bin, WasteCategory, CategoryLimit, Page } from '../types';
-import type { LucideIcon } from 'lucide-react';
 
 // Confetti particle component
 function Confetti({ count = 50 }: { count?: number }) {
@@ -443,7 +442,7 @@ export default function DisposalPage({ onNavigate }: DisposalPageProps) {
             <div className="space-y-3">
               {[
                 { label: 'Bin', value: selectedBin.location_name, icon: MapPin },
-                { label: 'Type', value: `${BIN_ICONS[selectedCategory.name]} ${language === 'sw' ? selectedCategory.name_sw || selectedCategory.name : selectedCategory.name}`, icon: Recycle },
+                { label: 'Type', value: language === 'sw' ? selectedCategory.name_sw || selectedCategory.name : selectedCategory.name, icon: getWasteIcon(selectedCategory.name).icon },
                 { label: 'CO₂ Saved', value: `~${selectedCategory.co2_saved_per_unit} kg`, icon: Leaf },
               ].map(({ label, value, icon: Icon }) => (
                 <div key={label} className="flex items-center gap-3 p-3 rounded-xl bg-white/5">

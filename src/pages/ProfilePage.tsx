@@ -132,7 +132,7 @@ export default function ProfilePage({ onNavigate }: Props) {
                         : 'border-white/10 text-white/30 hover:border-white/20'
                     }`}
                   >
-                    {lang === 'en' ? '🇬🇧 English' : '🇰🇪 Kiswahili'}
+                    {lang === 'en' ? 'English' : 'Kiswahili'}
                   </button>
                 ))}
               </div>

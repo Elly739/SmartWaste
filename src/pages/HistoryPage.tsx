@@ -9,6 +9,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
+import { getWasteIcon } from '../lib/wasteIcons';
 import type { Disposal, PointsTransaction } from '../types';
 
 export default function HistoryPage() {
@@ -139,13 +140,17 @@ export default function HistoryPage() {
               <p className="text-white/40">No disposals recorded yet.</p>
             </div>
           )}
-          {disposals.map(d => (
+          {disposals.map(d => {
+            const catName = (d as any).waste_categories?.name;
+            const wConfig = getWasteIcon(catName);
+            const WIcon = wConfig.icon;
+            return (
             <div key={d.id} className="flex items-center gap-4 rounded-2xl bg-white/[0.03] border border-white/5 p-4 hover:border-white/10 transition-all">
               <div
                 className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: `${(d as any).waste_categories?.color ?? '#22c55e'}15` }}
+                style={{ background: `${wConfig.color}20`, border: `1px solid ${wConfig.color}25` }}
               >
-                <Recycle size={18} style={{ color: (d as any).waste_categories?.color ?? '#22c55e' }} />
+                <WIcon size={18} style={{ color: wConfig.color }} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -177,7 +182,8 @@ export default function HistoryPage() {
                 </p>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="space-y-3">

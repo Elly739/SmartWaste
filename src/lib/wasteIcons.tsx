@@ -1,5 +1,5 @@
 import {
-  Bottle, FileText, Wrench, Wine, Sprout, Cpu,
+  CupSoda, FileText, Wrench, Wine, Sprout, Cpu,
   Lightbulb, Battery, Recycle, Trash2, Leaf
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -11,7 +11,7 @@ export interface WasteIconConfig {
 }
 
 const WASTE_ICON_MAP: Record<string, WasteIconConfig> = {
-  'Plastic Bottles': { icon: Bottle, color: '#3b82f6', bgGradient: 'from-blue-500 to-blue-600' },
+  'Plastic Bottles': { icon: CupSoda, color: '#3b82f6', bgGradient: 'from-blue-500 to-blue-600' },
   'Paper & Cardboard': { icon: FileText, color: '#f59e0b', bgGradient: 'from-amber-500 to-orange-600' },
   'Metal & Aluminum': { icon: Wrench, color: '#94a3b8', bgGradient: 'from-slate-400 to-slate-500' },
   'Glass': { icon: Wine, color: '#10b981', bgGradient: 'from-emerald-500 to-teal-600' },
